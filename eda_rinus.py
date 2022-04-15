@@ -1,7 +1,10 @@
+from lib2to3.pgen2.pgen import DFAState
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from scipy import stats
+from matplotlib import pyplot
+import numpy as np
 
 
 
@@ -83,37 +86,38 @@ def counting_mood_days(sdf):
         moodless_days.append({users: days_without_mood})
     return(mood_days, moodless_days)
 
+def retrieve_dict():
+    return feat_dict ({
+            'mood': float(0),
+            'circumplex.arousal': float(0),
+            'circumplex.valence': float(0),
+            'activity': float(0),
+            'screen': float(0),
+            'sms': float(0),
+            'appCat.builtin': float(0),
+            'appCat.communication': float(0),
+            'appCat.entertainment': float(0),
+            'appCat.finance': float(0),
+            'appCat.game': float(0),
+            'appCat.office': float(0),
+            'appCat.other': float(0),
+            'appCat.social': float(0),
+            'appCat.travel': float(0),
+            'appCat.unknown': float(0),
+            'appCat.utilities': float(0),
+            'appCat.weather': float(0),
+        })
 
-feat_dict = {
-        'mood': float(0),
-        'circumplex.arousal': float(0),
-        'circumplex.valence': float(0),
-        'activity': float(0),
-        'screen': float(0),
-        'sms': float(0),
-        'appCat.builtin': float(0),
-        'appCat.communication': float(0),
-        'appCat.entertainment': float(0),
-        'appCat.finance': float(0),
-        'appCat.game': float(0),
-        'appCat.office': float(0),
-        'appCat.other': float(0),
-        'appCat.social': float(0),
-        'appCat.travel': float(0),
-        'appCat.unknown': float(0),
-        'appCat.utilities': float(0),
-        'appCat.weather': float(0),
-    }
 
+# impute missing values based on previous day
+# heavily inspired by: https://www.analyticsvidhya.com/blog/2020/10/multivariate-multi-step-time-series-forecasting-using-stacked-lstm-sequence-to-sequence-autoencoder-in-tensorflow-2-0-keras/
+# def fill_missing_values(sdf):
+#     one_day = 60*24
+#     for row in range(sdf.shape[0]):
+#         for col in range(sdf.shape[1]):
+#             if np.isnan(sdf[row][col]):
+#                 sdf[row,col] = sdf[row-one_day,col]
 
+#     sdf.to_csv('testtest2.csv')
 
-# calculate average value per variable per day and keep only one per variable per day left
-new_sdf = sdf.groupby(['id', 'time', 'variable'])['value'].mean().to_frame().reset_index()
-
-# transform sdf to a pivot table --> this lines up the distinct variables into columns instead of rows
-# based on: https://pandas.pydata.org/docs/user_guide/reshaping.html
-sdf_pivot = new_sdf.pivot(index=['id', 'time'], columns=['variable'], values=['value'])
-sdf_pivot.columns = sdf_pivot.columns.droplevel(0)
-# tranform pivot table back into a dataframe to make it easier to work with
-organised_sdf = sdf_pivot.reset_index().rename_axis(None, axis=1)
-display(organised_sdf)
+#     return sdf
