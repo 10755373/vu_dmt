@@ -7,6 +7,12 @@ from matplotlib import pyplot
 import numpy as np
 
 
+def get_day(sdf):
+    sdf['day'] = pd.DatetimeIndex(sdf['time']).weekday
+    rdf = sdf[sdf['variable'] == 'mood']
+    rdf.head()
+    return rdf
+
 
 def timechange(sdf):
     sdf["time"] = pd.to_datetime(sdf["time"])
